@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./style.css";
 
 import logo from "../../assets/site-identity.png";
-import { authActions } from "../../redux/actions";
+import { authActions, userActions } from "../../redux/actions";
 
 const PublicNavbar = () => {
   const dispatch = useDispatch();
@@ -23,6 +23,11 @@ const PublicNavbar = () => {
   const handleLogout = () => {
     dispatch(authActions.logout());
   };
+
+  // const user = useSelector((state) => state.auth.user);
+  // useEffect(() => {
+  //   dispatch(authActions.getCurrentUser());
+  // }, []);
 
   const authLinks = (
     <Nav>

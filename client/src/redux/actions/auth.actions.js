@@ -45,12 +45,13 @@ const loginGoogleRequest = (access_token) => async (dispatch) => {
     dispatch({ type: types.LOGIN_GOOGLE_FAILURE, payload: error });
   }
 };
-const register = (name, email, password, avatarUrl) => async (dispatch) => {
+const register = (firstName, lastName, date, gender, email, password, avatarUrl) => async (dispatch) => {
   dispatch({ type: types.REGISTER_REQUEST, payload: null });
   try {
-    const res = await api.post("/users", { name, email, password, avatarUrl });
+    // console.log("hehe", firstName, lastName, date, gender, email, password, avatarUrl);
+    const res = await api.post("/users", { firstName, lastName, date, gender, email, password, avatarUrl });
     dispatch({ type: types.REGISTER_SUCCESS, payload: res.data.data });
-    toast.success(`Thank you for your registration, ${name}!`);
+    toast.success(`Thank you for your registration, ${firstName}!`);
   } catch (error) {
     dispatch({ type: types.REGISTER_FAILURE, payload: error });
   }

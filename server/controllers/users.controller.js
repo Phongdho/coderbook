@@ -9,15 +9,19 @@ const User = require("../models/User");
 const userController = {};
 
 userController.create = catchAsync(async (req, res, next) => {
-  let { email, password } = req.body;
+  let {firstName, lastName, date, gender, email, password } = req.body;
   let user = await User.findOne({ email });
-
+  console.log(user, "data");
   if (user)
     return next(new AppError(409, "User already exists", "Register Error"));
 
   const salt = await bcrypt.genSalt(10);
   password = await bcrypt.hash(password, salt);
   user = await User.create({
+    firstName,
+    lastName,
+    date,
+    gender,
     email,
     password,
   });
@@ -65,6 +69,72 @@ userController.destroy = async (req, res) => {
       res.json(user);
     }
   });
+};
+
+userController.createWithGoogle = async (req, res, next) => {
+  console.log("input", req.user);
+  const userInfo = req.user;
+  let result;
+  //allow user to create account
+  //from userInfo input , create a account in my database
+  try {
+    const found = await User.findOne({ email: userInfo.emails[0].value });
+    if (found) throw new Error("User already registered");
+    const salt = await bcrypt.genSalt(SALT_ROUND);
+    let password = await bcrypt.hash(userInfo.password, salt);
+
+    const newUser = {
+      firstName: userInfo.displayName,
+      avatarUrl: userInfo.photos[0].value,
+      email: userInfo.emails[0].value,
+      password,
+    };
+
+    result = await User.create(newUser);
+  } catch (error) {
+    return next(error);
+  }
+  return sendResponse(
+    res,
+    200,
+    true,
+    result,
+    false,
+    "Successfully create account with google"
+  );
+};
+
+userController.createWithFacebook = async (req, res, next) => {
+  console.log("input", req.user);
+  const userInfo = req.user;
+  let result;
+  //allow user to create account
+  //from userInfo input , create a account in my database
+  try {
+    const found = await User.findOne({ email: userInfo.emails[0].value });
+    if (found) throw new Error("User already registered");
+    const salt = await bcrypt.genSalt(SALT_ROUND);
+    let password = await bcrypt.hash(userInfo.password, salt);
+
+    const defaultUser = {
+      firstName: userInfo.displayName,
+      email: userInfo.emails[0].value,
+      facebookId: userInfo.id,
+      password,
+    };
+
+    result = await User.create(defaultUser);
+  } catch (error) {
+    return next(error);
+  }
+  return sendResponse(
+    res,
+    200,
+    true,
+    result,
+    false,
+    "Successfully create account with facebook"
+  );
 };
 
 module.exports = userController;

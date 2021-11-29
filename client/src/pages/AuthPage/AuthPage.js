@@ -23,7 +23,7 @@ export default function RegisterPage() {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  const [user, setUser] = useState({ email: "", password: "" });
+  const [user, setUser] = useState({ firstName:"", lastName:"", date: "", gender: "", email: "", password: "" });
   const [show, setShow] = useState(false);
 
   const onToggleModal = (e) => {
@@ -38,6 +38,22 @@ export default function RegisterPage() {
 
   const onChange = (e) => {
     setUser({ ...user, [e.target.id]: e.target.value });
+  };
+
+  const handleOnChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value});
+  }
+
+  const handleClick = (e) => {
+    if(e.target.checked) {
+      // console.log("gender nè", e.target.id);
+      setUser({...user, [e.target.name]: e.target.id});
+    };
+  }
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    dispatch(authActions.register(user.firstName, user.lastName, user.date, user.gender, user.email, user.password));
   };
 
   if (isAuthenticated) return <Navigate to="/" />;
@@ -125,20 +141,83 @@ export default function RegisterPage() {
         </Modal.Header>
         <Modal.Body>
           {/* STEP 1 */}
-          <Form className="d-flex flex-column justify-content-center">
+          <Form 
+              onSubmit={handleOnSubmit}
+              className="d-flex flex-column justify-content-center">
+            <Form.Row>
+              {/* <Form.Group as={Col} controlId="name">
+                  <Form.Label>Your Name</Form.Label>
+                  <Form.Control
+                    type="name"
+                    name="name"
+                    placeholder="Your Name"
+                    onChange={handleOnChange}
+                  />
+              </Form.Group> */}
+              <Form.Group as={Col} controlId="firstName">
+                <Form.Label>First Name</Form.Label>
+                <Form.Control
+                  type="firstName"
+                  name="firstName"
+                  placeholder="Your First Name"
+                  onChange={handleOnChange}
+                />
+              </Form.Group>
+              <Form.Group as={Col} controlId="lastName">
+                <Form.Label>Last Name</Form.Label>
+                <Form.Control
+                  type="lastName"
+                  name="lastName"
+                  placeholder="Your Last Name"
+                  onChange={handleOnChange}
+                />
+              </Form.Group>
+            </Form.Row>
             <Form.Row>
               <Form.Group as={Col} controlId="email">
                 <Form.Label>Email</Form.Label>
                 <Form.Control
                   type="email"
+                  name="email"
                   placeholder="Enter email"
+                  onChange={handleOnChange}
                 />
               </Form.Group>
               <Form.Group as={Col} controlId="password">
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                   type="password"
+                  name="password"
                   placeholder="Password"
+                  onChange={handleOnChange}
+                />
+              </Form.Group>
+            </Form.Row>
+            <Form.Row>
+              <Form.Group controlId="date" bsSize="large" as={Col}>
+                <Form.Label>Birthday</Form.Label>
+                <Form.Control
+                  type="date"
+                  name="date"
+                  onChange={handleOnChange}/>
+              </Form.Group>
+            </Form.Row>
+            <Form.Row>
+              <Form.Group controlId="gender" as={Col}>
+                <Form.Label>Gender</Form.Label>
+                <Form.Check
+                  type="radio"
+                  label="Male"
+                  name="gender"
+                  id="male"
+                  onClick={handleClick}
+                />
+                <Form.Check
+                  type="radio"
+                  label="Female"
+                  name="gender"
+                  id="female"
+                  onClick={handleClick}
                 />
               </Form.Group>
             </Form.Row>
