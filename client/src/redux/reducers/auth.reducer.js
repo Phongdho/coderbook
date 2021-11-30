@@ -6,8 +6,8 @@ const initialState = {
   isAuthenticated,
   accessToken: localStorage.getItem("accessToken"),
   user: {
-    firstName: "Loi",
-    lastName: "Tran",
+    firstName: "",
+    lastName: "",
   },
 };
 

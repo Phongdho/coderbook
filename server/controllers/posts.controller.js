@@ -51,14 +51,26 @@ postController.destroy = catchAsync(async (req, res) => {
 });
 
 postController.list = catchAsync(async (req, res) => {
+  const posts = await Post.find({}).populate("owner");
+  return sendResponse(
+    res, 
+    200, 
+    true, 
+    { posts }, 
+    null, 
+    "Received posts");
+});
+
+postController.getSinglePost = catchAsync(async(req, res) => {
+  const {userId} = req.params;
+  const posts = await Post.find({owner:userId});
   return sendResponse(
     res,
     200,
     true,
-    { posts: [{ foo: "bar" }] },
+    posts,
     null,
-    "Login successful"
-  );
+    "Successfully get current user's posts");
 });
 
 module.exports = postController;

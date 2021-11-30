@@ -11,6 +11,7 @@ const postReducer = (state = initialState, action) => {
   const { type, payload } = action;
   switch (type) {
     case types.POST_REQUEST:
+    case types.GET_SINGLE_POST_REQUEST:
       return {
         ...state,
         loading: true,
@@ -20,9 +21,14 @@ const postReducer = (state = initialState, action) => {
         ...state,
         loading: true,
       };
-
+    case types.GET_SINGLE_POST_REQUEST_SUCCESS:
+      return {
+        ...state,
+        posts: payload,
+      }
     case types.CREATE_POST_SUCCESS:
     case types.CREATE_POST_FAILURE:
+    case types.GET_SINGLE_POST_REQUEST_FAILURE:
       return {
         ...state,
         loading: false,

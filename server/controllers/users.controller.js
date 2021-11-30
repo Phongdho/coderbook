@@ -45,6 +45,25 @@ userController.read = async (req, res) => {
   }
 };
 
+userController.getCurrentUser = async (req, res) => {
+  const userId = req.userId;
+  const user = await User.findById(userId);
+  if (!user) {
+    res.status(404).json({ message: "User not Found" });
+  } else {
+    // res.json(user);
+    return sendResponse(
+      res,
+      200,
+      true,
+      [user, {userId}],
+      null,
+      "Successfully get current user"
+    )
+  }
+
+};
+
 userController.update = async (req, res) => {
   await User.findByIdAndUpdate(
     { _id: req.params.id },
@@ -74,17 +93,19 @@ userController.destroy = async (req, res) => {
 userController.createWithGoogle = async (req, res, next) => {
   console.log("input", req.user);
   const userInfo = req.user;
+  console.log("it's me", userInfo);
   let result;
   //allow user to create account
   //from userInfo input , create a account in my database
   try {
     const found = await User.findOne({ email: userInfo.emails[0].value });
     if (found) throw new Error("User already registered");
-    const salt = await bcrypt.genSalt(SALT_ROUND);
-    let password = await bcrypt.hash(userInfo.password, salt);
+    const salt = await bcrypt.genSalt(10);
+    let password = await bcrypt.hash("abc", salt);
 
     const newUser = {
-      firstName: userInfo.displayName,
+      firstName: userInfo.name.givenName,
+      lastName: userInfo.name.familyName,
       avatarUrl: userInfo.photos[0].value,
       email: userInfo.emails[0].value,
       password,
@@ -113,8 +134,8 @@ userController.createWithFacebook = async (req, res, next) => {
   try {
     const found = await User.findOne({ email: userInfo.emails[0].value });
     if (found) throw new Error("User already registered");
-    const salt = await bcrypt.genSalt(SALT_ROUND);
-    let password = await bcrypt.hash(userInfo.password, salt);
+    const salt = await bcrypt.genSalt(10);
+    let password = await bcrypt.hash("abc", salt);
 
     const defaultUser = {
       firstName: userInfo.displayName,

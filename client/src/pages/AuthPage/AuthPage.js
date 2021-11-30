@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, Navigate } from "react-router-dom";
+import GoogleLogin from 'react-google-login';
+import FacebookLogin from 'react-facebook-login';
 
 import {
   Col,
@@ -57,6 +59,16 @@ export default function RegisterPage() {
   };
 
   if (isAuthenticated) return <Navigate to="/" />;
+
+  const responseGoogle = (response) => {
+    console.log(response);
+    dispatch(authActions.loginGoogleRequest(response.tokenId));
+  }
+
+  const responseFacebook = (response) => {
+    console.log(response);
+    dispatch(authActions.loginFacebookRequest(response.id, response.accessToken));
+  }
 
   return (
     <div>
@@ -119,6 +131,18 @@ export default function RegisterPage() {
                 >
                   Create an account
                 </Button>
+                <GoogleLogin
+                  clientId="623979884133-snb7i0uh01iir8jrp95vtj60phleu6uf.apps.googleusercontent.com"
+                  buttonText="Login"
+                  onSuccess={responseGoogle}
+                  onFailure={responseGoogle}
+                  cookiePolicy={'single_host_origin'}
+                />
+                <FacebookLogin
+                  appId="443380430705916"
+                  autoLoad={true}
+                  fields="name,email,picture"
+                  callback={responseFacebook} />
               </Form>
             </Card>
           </Col>

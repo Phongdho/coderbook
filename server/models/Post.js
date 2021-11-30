@@ -18,5 +18,11 @@ const postSchema = Schema(
   }
 );
 
+// const getPostOfUser = async() => {
+//   const {userId} = req.params;
+
+//   const posts = await Post.find({owner: userId})
+// }
+
 const Post = mongoose.model("Post", postSchema);
 module.exports = Post;

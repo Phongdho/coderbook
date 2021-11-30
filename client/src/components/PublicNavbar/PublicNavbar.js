@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -17,6 +17,8 @@ import logo from "../../assets/site-identity.png";
 import { authActions, userActions } from "../../redux/actions";
 
 const PublicNavbar = () => {
+
+  // const [user, setUser] = useState();
   const dispatch = useDispatch();
   const { loading, isAuthenticated } = useSelector((state) => state.auth);
 
@@ -24,18 +26,19 @@ const PublicNavbar = () => {
     dispatch(authActions.logout());
   };
 
-  // const user = useSelector((state) => state.auth.user);
-  // useEffect(() => {
-  //   dispatch(authActions.getCurrentUser());
-  // }, []);
+  const user = useSelector((state) => state.auth.user);
+  // console.log("it's me", user);
+  useEffect(() => {
+    dispatch(authActions.getCurrentUser());
+  }, []);
 
   const authLinks = (
     <Nav>
-      <Nav.Link href="/PrimeTimeTran">
+      <Link to="/profile">
         <div className="nav-icon">
           <FontAwesomeIcon icon="user" size="lg" />
         </div>
-      </Nav.Link>
+      </Link>
       <Nav.Link href="#create">
         <div className="nav-icon">
           <FontAwesomeIcon icon={"plus"} size="lg" />
@@ -60,7 +63,7 @@ const PublicNavbar = () => {
           </div>
         }
       >
-        <NavDropdown.Item href="#action/3.1">Loi V Tran</NavDropdown.Item>
+        <NavDropdown.Item href="#action/3.1">{user?.firstName}</NavDropdown.Item>
         <NavDropdown.Divider />
         <NavDropdown.Item onClick={handleLogout} href="#action/3.4">
           Log out

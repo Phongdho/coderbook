@@ -22,7 +22,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     //   callbackURL: "https://ecombe.herokuapp.com/api/users/login/googleok",
-      callbackURL: "http://localhost:3000/",
+      callbackURL: "http://localhost:5000/api/users/googledone",
     },
     (accessToken, refreshToken, profile, cb) => {
       return cb(null, profile);
@@ -30,18 +30,18 @@ passport.use(
   )
 );
 
-// passport.use(
-//   new FacebookStrategy(
-//     {
-//       clientID: process.env.FACEBOOK_CLIENT_ID,
-//       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-//     //   callbackURL: "https://ecombe.herokuapp.com/api/users/login/facebookok",
-//       callbackURL: "http://localhost:3000/",
-//       profileFields: ["id", "email", "displayName"],
-//     },
-//       (accessToken, refreshToken, profile, done) => {
-//           console.log("success login with facebook", accessToken, profile);
-//           return done(null, profile);
-//     }
-//     )
-// );
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    //   callbackURL: "https://ecombe.herokuapp.com/api/users/login/facebookok",
+      callbackURL: "http://localhost:5000/api/users/facebookdone",
+      profileFields: ["id", "email", "displayName"],
+    },
+      (accessToken, refreshToken, profile, done) => {
+          console.log("success login with facebook", accessToken, profile);
+          return done(null, profile);
+    }
+    )
+);

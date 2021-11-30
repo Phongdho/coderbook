@@ -1,12 +1,29 @@
-import React from "react";
-
+import React, {useState, useEffect} from "react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Row, Col, Nav, Button, Container, ButtonGroup } from "react-bootstrap";
-
+import { authActions, userActions, postActions } from "../../redux/actions";
 import "./style.css";
 
 import Composer from "../../components/Composer/Composer";
 
 export default function ProfilePage() {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+  const posts = useSelector((state) => state.post.posts);
+  console.log("post nè", posts);
+
+  console.log("it's me", user);
+  useEffect(() => {
+    dispatch(authActions.getCurrentUser());
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      dispatch(postActions.getSinglePost(user[1]?.userId));
+    }
+  }, []);
+
   return (
     <div>
       <Row className="centered hero">
@@ -22,6 +39,7 @@ export default function ProfilePage() {
               className="position-absolute rounded-circle cover-profile-photo"
               src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg"
             />
+            <h5 className="profile-name">{user&&user[0]?.firstName + " " + user[0]?.lastName}</h5>
           </div>
         </Container>
         <hr className="w-75" />
@@ -89,33 +107,11 @@ export default function ProfilePage() {
           </Col>
           <Col xs={7} className="posts-col">
             <Composer />
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
+            {posts && posts.map((post, index) => {
+              return (
+                <h5 key={index}>{post.body}</h5>
+              )
+            })}
           </Col>
         </Container>
       </Row>

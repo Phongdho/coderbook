@@ -61,6 +61,7 @@ const getSinglePost = (postId) => async (dispatch) => {
   dispatch({ type: types.GET_SINGLE_POST_REQUEST, payload: null });
   try {
     const res = await api.get(`/posts/${postId}`);
+    // console.log("emgaimua", res.data.data);
     dispatch({
       type: types.GET_SINGLE_POST_REQUEST_SUCCESS,
       payload: res.data.data,
