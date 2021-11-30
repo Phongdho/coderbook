@@ -19,10 +19,10 @@ export default function ProfilePage() {
   }, []);
 
   useEffect(() => {
-    if (user) {
+    if (user[1]?.userId) {
       dispatch(postActions.getSinglePost(user[1]?.userId));
     }
-  }, []);
+  }, [user[1]?.userId]);
 
   return (
     <div>
@@ -107,9 +107,9 @@ export default function ProfilePage() {
           </Col>
           <Col xs={7} className="posts-col">
             <Composer />
-            {posts && posts.map((post, index) => {
+            {posts && posts?.map((post, index) => {
               return (
-                <h5 key={index}>{post.body}</h5>
+                <h5 key={index}>{post?.body}</h5>
               )
             })}
           </Col>
