@@ -47,8 +47,8 @@ const COMMENTS = [
   },
 ];
 
-const Avatar = (props) => {
-  return <img alt="profile" className="rounded-circle" src={avatar} />;
+const Avatar = ({url}) => {
+  return <img alt="profile" className="rounded-circle" src={url} />;
 };
 
 /* STEP 4 */
@@ -135,24 +135,26 @@ const PostReactions = () => {
   );
 };
 
-function PostHeader() {
+function PostHeader({data}) {
   return (
     <div className="d-flex align-items-center p-3">
-      <Avatar url="https://scontent.fsgn5-6.fna.fbcdn.net/v/t1.0-1/p480x480/13924881_10105599279810183_392497317459780337_n.jpg?_nc_cat=109&ccb=3&_nc_sid=7206a8&_nc_ohc=uI6aGTdf9vEAX8-Aev9&_nc_ht=scontent.fsgn5-6.fna&tp=6&oh=e8b18753cb8aa63937829afe3aa916a7&oe=6064C685" />
+      <Avatar url={data?.avatarUrl} />
       <h3 className="font-weight-bold ml-3">
-        Charles Lee
+        {data?.firstName + " " + data?.lastName}
       </h3>
     </div>
   );
 }
 
-export default function Post() {
+export default function Post({user, p}) {
+  console.log("2021 nè", p);
   return (
     <Card className="p-3 mb-3 shadow rounded-md">
-      <PostHeader/>
+      <PostHeader data={user}/>
+      <div>{p?.body}</div>
       <Card.Img
         variant="top"
-        src="https://images.unsplash.com/photo-1529231812519-f0dcfdf0445f?ixid=MXwxMjA3fDB8MHxzZWFyY2h8Mnx8dGFsZW50ZWR8ZW58MHx8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60"
+        src={p?.imageUrl}
       />
       <PostReactions />
       <hr className="my-1" />

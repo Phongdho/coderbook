@@ -12,11 +12,15 @@ const AllRoutes = () => {
     <Routes>
       <Route path="/" element={<PublicLayout/>} >
         <Route exact path="/auth" element={<AuthPage/>} />
-        <Route exact path="/profile" element={<PrivateRoute>
+        <Route exact path="/:name" element={<PrivateRoute>
           <ProfilePage/>
         </PrivateRoute>} />
         <Route  exact path="/" element={<HomePage/>} />
       </Route>
+      {/* <Route path="/admin" element={<AdminLayout/>} >
+        <Route exact path="/admin/auth" element={<AuthPage/>} />
+        <Route  path="/admin" element={<HomePage/>} />
+      </Route> */}
     </Routes>
   );
 };

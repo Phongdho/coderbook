@@ -9,6 +9,7 @@ const userSchema = Schema(
     // name: { type: String, required: false, unique: false, default: "" },
     firstName: {type: String, required: false, unique: false, default: ""},
     lastName: {type: String, required: false, unique: false, default: ""},
+    displayName: {type: String, required: true, unique: true},
     date: {type: Date, required: false, unique: false, default: ""},
     gender: {type: String, required: false, unique: false, default: ""},
     email: { type: String, required: true, unique: true },
@@ -36,7 +37,8 @@ userSchema.statics.findOrCreate = async (profile) => {
         password: newPassword,
         avatarUrl: profile.avatarUrl,
         googleId: profile.googleId,
-        facebookId: profile.facebookId
+        facebookId: profile.facebookId,
+        displayName: profile.displayName
       })
     }
     return user

@@ -51,7 +51,16 @@ postController.destroy = catchAsync(async (req, res) => {
 });
 
 postController.list = catchAsync(async (req, res) => {
-  const posts = await Post.find({}).populate("owner");
+  let {page, limit, sortBy, ...filter} = {...req.query};
+  page = parseInt(page) || 1;
+  limit = parseInt(limit) || 1;
+  const totalPosts = await Post.count({...filter});
+  const totalPages = Math.ceil(totalPosts / limit);
+  const offset = limit * (page -1);
+  const posts = await Post.find(filter)
+    .sort({...sortBy, createdAt: -1})
+    .skip(offset)
+    .limit(limit);
   return sendResponse(
     res, 
     200, 
@@ -61,16 +70,16 @@ postController.list = catchAsync(async (req, res) => {
     "Received posts");
 });
 
-postController.getSinglePost = catchAsync(async(req, res) => {
-  const {userId} = req.params;
-  const posts = await Post.find({owner:userId});
-  return sendResponse(
-    res,
-    200,
-    true,
-    posts,
-    null,
-    "Successfully get current user's posts");
-});
+// postController.getSinglePost = catchAsync(async(req, res) => {
+//   const {userId} = req.params;
+//   const posts = await Post.find({owner:userId});
+//   return sendResponse(
+//     res,
+//     200,
+//     true,
+//     posts,
+//     null,
+//     "Successfully get current user's posts");
+// });
 
 module.exports = postController;

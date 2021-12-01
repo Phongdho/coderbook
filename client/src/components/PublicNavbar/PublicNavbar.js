@@ -18,15 +18,13 @@ import { authActions, userActions } from "../../redux/actions";
 
 const PublicNavbar = () => {
 
-  // const [user, setUser] = useState();
   const dispatch = useDispatch();
-  const { loading, isAuthenticated } = useSelector((state) => state.auth);
+  const { loading, isAuthenticated, user } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
     dispatch(authActions.logout());
   };
 
-  const user = useSelector((state) => state.auth.user);
   // console.log("it's me", user);
   useEffect(() => {
     dispatch(authActions.getCurrentUser());
@@ -34,7 +32,7 @@ const PublicNavbar = () => {
 
   const authLinks = (
     <Nav>
-      <Link to="/profile">
+      <Link to={`/${user?.displayName}`}>
         <div className="nav-icon">
           <FontAwesomeIcon icon="user" size="lg" />
         </div>

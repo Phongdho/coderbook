@@ -47,6 +47,8 @@ const SidebarButton = ({ title, icon }) => {
 export default function HomePage() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const posts = useSelector((state) => state.post.posts);
+  const user = useSelector((state) => state.auth.user);
+
   console.log("posts nữa nè", posts);
   const dispatch = useDispatch();
 
@@ -69,7 +71,11 @@ export default function HomePage() {
         id="scrollingElement"
         className="d-flex flex-column align-items-center posts-container"
       >
-        <Composer />
+        <Composer type="homepage" />
+        {
+              posts.posts?.length > 0 && 
+                posts.posts?.map((p)=> <Post key={p._id} user={user} p={p} />)
+            }
         <Post />
         <Post />
         <Post />

@@ -1,28 +1,61 @@
 import React, {useState, useEffect} from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import { useParams } from "react-router";
 import { Row, Col, Nav, Button, Container, ButtonGroup } from "react-bootstrap";
 import { authActions, userActions, postActions } from "../../redux/actions";
+import Post from "../../components/Post";
 import "./style.css";
 
 import Composer from "../../components/Composer/Composer";
 
 export default function ProfilePage() {
+
+  const params = useParams();
+  const {name} = params;
   const dispatch = useDispatch();
+  //login user
   const user = useSelector((state) => state.auth.user);
+
+  //users that match with the slug: other users
+  const otherUser = useSelector(state => state.user.otherUser);
+
+  //all the posts display on profile page(related to the slug user)
   const posts = useSelector((state) => state.post.posts);
   console.log("post nè", posts);
 
-  console.log("it's me", user);
-  useEffect(() => {
-    dispatch(authActions.getCurrentUser());
-  }, []);
+  // console.log("it's me", user);
+  // useEffect(() => {
+  //   dispatch(authActions.getCurrentUser());
+  // }, []);
 
   useEffect(() => {
-    if (user[1]?.userId) {
-      dispatch(postActions.getSinglePost(user[1]?.userId));
+    if (name === user.displayName){
+      //true => the user === other User => get into his own profile page
+      dispatch(postActions.postsRequest(1, 10, null, user._id, null))
+    } else {
+      //false => user != other User => user get into otherUser profile page
+      dispatch(userActions.singleUsersRequest({displayName:name}))
     }
-  }, [user[1]?.userId]);
+  }, [name]);
+  useEffect(() => {
+    if(otherUser) {
+      dispatch(postActions.postsRequest(1, 10, null, otherUser._id, null))
+    }
+  }, [otherUser]);
+
+  let renderUser;
+  if (name === user.displayName){
+    renderUser = user;
+  } else {
+    renderUser = otherUser;
+  }
+
+  // useEffect(() => {
+  //   if (user[1]?.userId) {
+  //     dispatch(postActions.getSinglePost(user[1]?.userId));
+  //   }
+  // }, [user[1]?.userId]);
 
   return (
     <div>
@@ -37,9 +70,9 @@ export default function ProfilePage() {
             <img
               alt="profile"
               className="position-absolute rounded-circle cover-profile-photo"
-              src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg"
+              src={renderUser?.avatarUrl}
             />
-            <h5 className="profile-name">{user&&user[0]?.firstName + " " + user[0]?.lastName}</h5>
+            <h5 className="profile-name">{renderUser?.firstName + " " + renderUser?.lastName}</h5>
           </div>
         </Container>
         <hr className="w-75" />
@@ -106,12 +139,11 @@ export default function ProfilePage() {
             <h1>Sidebar</h1>
           </Col>
           <Col xs={7} className="posts-col">
-            <Composer />
-            {posts && posts?.map((post, index) => {
-              return (
-                <h5 key={index}>{post?.body}</h5>
-              )
-            })}
+          {name === user.displayName?<Composer type="profile"/>:null}
+              {
+              posts?.posts.length > 0 && 
+                posts?.posts.map((p)=> <Post key={p._id} user={renderUser} p={p} />)
+            }
           </Col>
         </Container>
       </Row>
