@@ -74,7 +74,7 @@ export default function HomePage() {
         <Composer type="homepage" />
         {
               posts.posts?.length > 0 && 
-                posts.posts?.map((p)=> <Post key={p._id} user={user} p={p} />)
+                posts.posts?.map((p)=> <Post key={p._id} user={user} p={p} type="home"/>)
             }
         <Post />
         <Post />

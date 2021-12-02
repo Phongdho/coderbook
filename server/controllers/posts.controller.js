@@ -5,7 +5,7 @@ const {
   catchAsync,
   sendResponse,
 } = require("../helpers/utils.helper");
-
+const Comment = require("../models/Comment");
 const postController = {};
 
 postController.create = catchAsync(async (req, res) => {
@@ -18,7 +18,7 @@ postController.read = catchAsync(async (req, res, next) => {
   if (!post)
     return next(new AppError(404, "Post not found", "Get Single Post Error"));
 
-  await post.populate("owner").populate("comments");
+  await post.populate("owner").populate("comments", populate("owner"));
   await post.execPopulate();
 
   res.json(post);
@@ -60,7 +60,7 @@ postController.list = catchAsync(async (req, res) => {
   const posts = await Post.find(filter)
     .sort({...sortBy, createdAt: -1})
     .skip(offset)
-    .limit(limit);
+    .limit(limit).populate("owner").populate({path: "comments", populate: "owner"});
   return sendResponse(
     res, 
     200, 
@@ -81,5 +81,20 @@ postController.list = catchAsync(async (req, res) => {
 //     null,
 //     "Successfully get current user's posts");
 // });
+postController.createComment = async (req, res) => {
+  const comment = await Comment.create({
+    ...req.body,
+    owner: req.userId,
+    post: req.params.id,
+  });
 
+  const post = await Post.findById(req.params.id);
+  post.comments.push(comment._id);
+
+  await post.save();
+  await post.populate("comments");
+  await post.execPopulate();
+
+  return sendResponse(res, 200, true, { post }, null, "Comment created!");
+};
 module.exports = postController;

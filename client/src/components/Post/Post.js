@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useState} from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Col,
   Form,
@@ -11,9 +12,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import "./style.css";
-
-import avatar from "../../assets/avatar.png";
-
+import { commentActions } from "../../redux/actions/comment.action";
+import { postActions } from "../../redux/actions";
 const COMMENTS = [
   {
     id: 1,
@@ -52,9 +52,24 @@ const Avatar = ({url}) => {
 };
 
 /* STEP 4 */
-const CommentForm = () => {
+const CommentForm = (props) => {
+  const [comment, setComment] = useState("");
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.auth.user)
+  const otherUser = useSelector(state => state.user.otherUser)
+  console.log("props", props);
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if(props.types ==="user" && user.displayName===otherUser?.displayName){
+    dispatch(commentActions.createComment(props.postId, comment, user._id));
+    } else if( props.types ==="user" && user.displayName!==otherUser?.displayName){
+      dispatch(postActions.createComment(props.postId, comment, otherUser?._id));
+    } else if (props.types === "home"){
+      dispatch(postActions.createComment(props.postId, comment, null));
+    }
+  };
   return (
-    <Form>
+    <Form onSubmit={onSubmit}>
       <Form.Row>
         <Col className="d-flex">
           <Form.Control
@@ -62,6 +77,7 @@ const CommentForm = () => {
             type="text"
             placeholder="Write a comment..."
             className="border-0 rounded-md bg-light"
+            onChange={(e) => setComment(e.target.value)}
           />
         </Col>
       </Form.Row>
@@ -69,27 +85,41 @@ const CommentForm = () => {
   );
 };
 
-const Comment = ({ body, user }) => {
+const Comment = ({d}) => {
+
+  console.log("comment d", d);
+  
   return (
     <ListGroupItem className="justify-content-start border-bottom-0 pr-0 py-0">
-      <Avatar url={user.avatarUrl} />
+      {/* <Avatar url={owner?.avatarUrl} />
       <div className="col">
         <div className="comment-bubble">
-          <div className="font-weight-bold">{user.name}</div>
+          <div className="font-weight-bold">{owner?.displayName}</div>
           <p>{body}</p>
         </div>
-      </div>
+      </div> */}
     </ListGroupItem>
   );
 };
 
 const PostComments = (props) => {
+  console.log("its props", props);
   return (
     <Card.Body>
       <ListGroup className="list-group-flush">
-        {props.comments.map((c) => (
-          <Comment key={c.id} {...c} />
-        ))}
+        {props?.comments?.length > 0 && props?.comments.map((c) => {
+        return (
+          <ListGroupItem className="justify-content-start border-bottom-0 pr-0 py-0">
+          <Avatar url={c?.owner?.avatarUrl} />
+          <div className="col">
+            <div className="comment-bubble">
+              <div className="font-weight-bold">{c?.owner?.displayName}</div>
+              <p>{c?.body}</p>
+            </div>
+          </div>
+        </ListGroupItem>
+        )
+        })}
       </ListGroup>
     </Card.Body>
   );
@@ -146,8 +176,9 @@ function PostHeader({data}) {
   );
 }
 
-export default function Post({user, p}) {
-  console.log("2021 nè", p);
+export default function Post({user, p, type}) {
+
+  // console.log("2021 nè", p);
   return (
     <Card className="p-3 mb-3 shadow rounded-md">
       <PostHeader data={user}/>
@@ -160,8 +191,9 @@ export default function Post({user, p}) {
       <hr className="my-1" />
       <PostActions />
       <hr className="mt-1" />
-      <PostComments comments={COMMENTS} />
-      <CommentForm />
+      <PostComments comments={p?.comments} />
+      <CommentForm postId={p?._id} types={type}/>
+      {/* <Comment /> */}
     </Card>
   );
 }

@@ -142,7 +142,7 @@ export default function ProfilePage() {
           {name === user.displayName?<Composer type="profile"/>:null}
               {
               posts?.posts.length > 0 && 
-                posts?.posts.map((p)=> <Post key={p._id} user={renderUser} p={p} />)
+                posts?.posts.map((p)=> <Post key={p._id} user={renderUser} p={p} type="user" />)
             }
           </Col>
         </Container>

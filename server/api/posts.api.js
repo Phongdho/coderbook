@@ -9,6 +9,11 @@ router.post("/", authMiddleware.loginRequired, postsController.create);
 // router.get("/:userId", authMiddleware.loginRequired, postsController.getSinglePost);
 router.get("/", authMiddleware.loginRequired, postController.list);
 router.get("/:id", postsController.read);
+router.post(
+    "/:id/comments",
+    authMiddleware.loginRequired,
+    postsController.createComment
+  );
 router.put("/:id", postsController.update);
 router.delete("/:id", postsController.destroy);
 
